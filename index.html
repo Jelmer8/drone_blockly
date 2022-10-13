@@ -5,28 +5,83 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
-	<title>A Basic HTML5 Template</title>
-	<meta name="description" content="A simple HTML5 Template for new projects.">
-	<meta name="author" content="SitePoint">
+	<title>Tello Blockly</title>
 
 	<script src="blockly-v9.0.0/blockly_compressed.js"></script>
 	<script src="blockly-v9.0.0/blocks_compressed.js"></script>
 	<script src="blockly-v9.0.0/javascript_compressed.js"></script>
 	<script src="blockly-v9.0.0/python_compressed.js"></script>
-	<script src="blockly-v9.0.0/msg/en.js"></script>
+	<script src="blockly-v9.0.0/msg/nl.js"></script>
+	<script src="index.js"></script>
 
 	<style>
 		body {
 			margin: 0;
+			overflow: hidden;
+		}
+
+		#blocklyDiv {
+			position: absolute;
+			top: 0;
+			left: 0;
+			bottom: 0;
+			right: 260px;
+		}
+
+		#codePanel {
+			position: absolute;
+			top: -1px;
+			left: calc(100vw - 257px);
+			bottom: 0;
+			right: 0;
+		}
+
+		#codeTextArea {
+			position: absolute;
+			top: 35px;
+			bottom: 0;
+			right: 0;
+			height: calc(100vh - 44px);
+			width: 100%;
+			overflow: scroll;
+			padding-left: 6px;
+			white-space: pre;
+			overflow-wrap: normal;
+			overflow-x: scroll;
+		}
+
+		#pythonCodeText {
+			position: absolute;
+			top: 1px;
+			left: -12px;
+			right: 0;
+			height: 35px;
+			background-color: white;
+			font-family: sans-serif;
+			font-size: 25px;
+			text-align: center;
+			border: 1px solid #8f8f9d;
+			border-radius: 2px;
+			border-bottom-color: white;
+			z-index: 1;
+		}
+
+		hr {
+			z-index: 2;
+			position: absolute;
+			top: 27px;
+			left: 0;
+			right: 28px;
 		}
 	</style>
-
 </head>
 
-<body>
-
-	<div id="blocklyDiv" style="height: 100vh; width: 100vw;"></div>
-
-	<script src="index.js"></script>
+<body onload="init()">
+	<div id="blocklyDiv"></div>
+	<div id="codePanel">
+		<div id="pythonCodeText">Python code</div>
+		<hr>
+		<textarea id="codeTextArea" readonly>Hier komt de gegenereerde python code in te staan als je blokjes toevoegt!</textarea>
+	</div>
 </body>
 </html>

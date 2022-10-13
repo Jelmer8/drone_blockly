@@ -1,3 +1,4 @@
+//de toolbox voor blockly
 const toolbox = {
     contents: [
         {
@@ -367,10 +368,12 @@ const toolbox = {
                     contents: [
                         {
                             kind: 'BLOCK',
-                            //blockxml:
-                            //    '<block type="lists_repeat">\n          <value name="NUM">\n            <shadow type="math_number">\n              <field name="NUM">5</field>\n            </shadow>\n          </value>\n        </block>',
-                            type: 'drone_connect',
-                        }
+							type: 'drone_connect',
+                        },
+						{
+							kind: 'BLOCK',
+							type: 'drone_forward',
+						}
                     ],
                     name: 'Toggles',
                     colour: '#091285'
@@ -384,28 +387,94 @@ const toolbox = {
     style: 'display: none',
 };
 
-const custom_blocks = [{
-    "type": "drone_connect",
-    "message0": 'Verbind met de drone',
-    "colour": "#000000",
-    "nextStatement": null,
-    "previousStatement": null,
-    "tooltip": "Wacht tot de drone verbonden is."
-}];
+//onze custom drone blocks
+const custom_blocks = [
+	{
+		"type": "drone_connect",
+		"message0": 'Verbind met de drone',
+		"colour": "#000000",
+		//"previousStatement": null,
+		"nextStatement": null,
+		"tooltip": "Wacht tot de drone verbonden is.",
+        "codeGen": () => {
+            Blockly.Python.definitions_['drone_connect'] = 'from djitellopy import Tello';
+            return 'tello = Tello()\ntello.connect()\n';
+        }
+	},
+	{
+		"type": "drone_forward",
+		"message0": "Drone %1 centimeter vooruit laten vliegen",
+		"colour": "#000000",
+		"previousStatement": null,
+		"nextStatement": null,
+		"args0": [
+		  {
+			"type": "input_value",
+			"name": "DISTANCE",
+			"check": "Number"
+		  }
+		],
+		"tooltip": "Laat de drone x centimeter vooruit vliegen.",
+        "codeGen": (block) => {
+            return `tello.forward(${Blockly.Python.valueToCode(block, 'DISTANCE', Blockly.Python.ORDER_NONE)})\n`;
+        }
+	}
+];
 
-const sampleGenerator = new Blockly.Generator('Python');
 
+function init() {
+    //register de codeGen functies bij blockly
+    custom_blocks.forEach((block, index) => {
+        if (!block.hasOwnProperty("codeGen")) {
+            console.error(`!! block ${block.type} met index ${index} heeft geen codeGen fn !!`);
+        }
+        Blockly.Python[block.type] = block.codeGen;
+    });
 
-Blockly.Python['drone_connect'] = function(block) {
-    Blockly.Python.definitions_['drone_connect'] = 'from djitellopy import Tello';
-    return 'tello = Tello()\ntello.connect()\n';
+    //register de custom blocks bij blockly
+    Blockly.defineBlocksWithJsonArray(custom_blocks);
+
+    //maak de blockly workspace aan
+    const workspace = Blockly.inject('blocklyDiv', {toolbox: toolbox});
+
+    //als er een workspace is opgeslagen in localStorage, zet deze terug
+    const savedWorkspace = localStorage.getItem('workspace');
+    if (savedWorkspace !== null) {
+        Blockly.Xml.appendDomToWorkspace(Blockly.Xml.textToDom(savedWorkspace), workspace)
+    }
+
+    //als je de pagina afsluit een confirmation dialog laten zien en workspace opslaan in localStorage
+    window.onbeforeunload = (event) => {
+        const textWorkspace = Blockly.Xml.domToText(Blockly.Xml.workspaceToDom(workspace));
+        if (textWorkspace !== '<xml xmlns="https://developers.google.com/blockly/xml"></xml>') {//checken of er wel objecten in de workspace staan
+            localStorage.setItem('workspace', textWorkspace);
+        }
+        //TODO: deze weer uncommenten (reloaden is zo sneller)
+        //event.preventDefault();
+        //return event.returnValue = "Weet je zeker dat je de pagina wilt afsluiten?";
+    };
+
+    const codeTextArea = document.getElementById("codeTextArea");
+
+    workspace.addChangeListener((event) => {//eventlistener is op het moment alleen voor het opnieuw genereren van de python code preview
+        switch(event.type) {
+            //todo: case Blockly.Events.BLOCK_CREATE is dit handig??
+            case Blockly.Events.BLOCK_CHANGE://als er iets aan een blok verandert, genereer de code opnieuw (het genereren kost maar heel weinig tijd, ~1ms)
+                if (event.element === "field" || event.element === "disabled") {//todo: wat is inline, mutation? https://developers.google.com/blockly/guides/configure/web/events#event_types
+                    const currTime = performance.now();
+                    codeTextArea.innerHTML = Blockly.Python.workspaceToCode(workspace);
+                    console.log(performance.now() - currTime);
+                }
+                break;
+            case Blockly.Events.BLOCK_MOVE:
+                codeTextArea.innerHTML = Blockly.Python.workspaceToCode(workspace);
+                break;
+        }
+        if (codeTextArea.innerHTML === "") {
+            codeTextArea.innerHTML = "Hier komt de gegenereerde python code in te staan als je blokjes toevoegt!";
+        }
+    });
 }
 
 
 
-Blockly.defineBlocksWithJsonArray(custom_blocks);
-
-const workspace = Blockly.inject('blocklyDiv', {toolbox: toolbox});
-
-//gen code:
-//var code = Blockly.JavaScript.workspaceToCode(workspace);
