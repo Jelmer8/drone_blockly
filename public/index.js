@@ -653,6 +653,7 @@ function init() {
 function sendCode() {
     let xhr = new XMLHttpRequest();
     xhr.open("POST", "http://raspberrypi.local/sendCode");
+    xhr.setRequestHeader("Accept", "application/json");
     xhr.setRequestHeader("Content-Type", "application/json");
 
     xhr.onreadystatechange = function () {
