@@ -372,7 +372,7 @@ const toolbox = {
                         },
 						{
 							kind: 'BLOCK',
-							type: 'drone_forward'
+							type: 'drone_move'
 						},
                         {
                             kind: 'BLOCK',
@@ -392,19 +392,7 @@ const toolbox = {
                         },
                         {
                             kind: 'BLOCK',
-                            type: 'drone_flip_right'
-                        },
-                        {
-                            kind: 'BLOCK',
-                            type: 'drone_flip_left'
-                        },
-                        {
-                            kind: 'BLOCK',
-                            type: 'drone_flip_back'
-                        },
-                        {
-                            kind: 'BLOCK',
-                            type: 'drone_flip_forward'
+                            type: 'drone_flip'
                         }
                     ],
                     name: 'Toggles',
@@ -434,7 +422,7 @@ const custom_blocks = [
         }
 	},
 	{
-		"type": "drone_forward",
+		"type": "drone_move",
 		"message0": "Drone %1 centimeter %2 laten vliegen",
 		"colour": "#000000",
 		"previousStatement": null,
@@ -449,22 +437,20 @@ const custom_blocks = [
               "type": "field_dropdown",
               "name": "DIRECTION",
               "options": [
-                  [ "vooruit", "VOORUIT" ],
-                  [ "achteruit", "ACHTERUIT" ],
-                  [ "naar links", "LINKS" ],
-                  [ "naar rechts", "RECHTS" ],
-                  [ "naar boven", "BOVEN" ],
-                  [ "naar onder", "ONDER" ]
+                  [ "vooruit", "forward" ],
+                  [ "achteruit", "back" ],
+                  [ "naar links", "left" ],
+                  [ "naar rechts", "right" ],
+                  [ "naar boven", "up" ],
+                  [ "naar onder", "down" ]
               ]
           }
 		],
 		"tooltip": "Laat de drone x centimeter vooruit vliegen.",
         "codeGen": (block) => {
-            console.log(Blockly.Python.valueToCode(block, 'DIRECTION', Blockly.Python.ORDER_NONE));
-            //switch (Blockly.Python.valueToCode(block, 'DIRECTION', Blockly.Python.ORDER_NONE)) {
+            const direction = block.getFieldValue("DIRECTION");
 
-            //}
-            return `tello.forward(${Blockly.Python.valueToCode(block, 'DISTANCE', Blockly.Python.ORDER_NONE)})\n`;
+            return `tello.move_${direction}(${Blockly.Python.valueToCode(block, 'DISTANCE', Blockly.Python.ORDER_NONE)})\n`;
         }
 	},
 	{
@@ -510,47 +496,39 @@ const custom_blocks = [
         }
     },
     {
-        "type": "drone_flip_right",
-        "message0": 'Laat de drone een flip naar rechts doen',
+        "type": "drone_flip",
+        "message0": 'Laat de drone een flip naar %1 doen',
         "colour": "#000000",
         "previousStatement": null,
         "nextStatement": null,
-        "tooltip": "Laat de drone een flip naar rechts doen.",
+        "tooltip": "Laat de drone een flip doen.",
+        "args0": [
+            {
+                "type": "field_dropdown",
+                "name": "DIRECTION",
+                "options": [
+                    [ "voren", "forward" ],
+                    [ "achter", "back" ],
+                    [ "links", "left" ],
+                    [ "rechts", "right" ]
+                ]
+            }
+        ],
         "codeGen": (block) => {
-            return "tello.flip_right()\n";
+            const direction = block.getFieldValue("DIRECTION");
+
+            return `tello.flip_${direction}()\n`;
         }
     },
     {
-        "type": "drone_flip_left",
-        "message0": 'Laat de drone een flip naar links doen',
+        "type": "drone_start_record",
+        "message0": "Start met een filmpje opnemen",
         "colour": "#000000",
         "previousStatement": null,
         "nextStatement": null,
-        "tooltip": "Laat de drone een flip naar links doen.",
+        "tooltip": "Start met opnemen.",
         "codeGen": (block) => {
-            return "tello.flip_left()\n";
-        }
-    },
-    {
-        "type": "drone_flip_back",
-        "message0": 'Laat de drone een flip naar achter doen',
-        "colour": "#000000",
-        "previousStatement": null,
-        "nextStatement": null,
-        "tooltip": "Laat de drone een flip naar achter doen.",
-        "codeGen": (block) => {
-            return "tello.flip_back()\n";
-        }
-    },
-    {
-        "type": "drone_flip_forward",
-        "message0": 'Laat de drone een flip naar voren doen',
-        "colour": "#000000",
-        "previousStatement": null,
-        "nextStatement": null,
-        "tooltip": "Laat de drone een flip naar voren doen.",
-        "codeGen": (block) => {
-            return "tello.flip_forward()\n";
+            return `record = True\ntello.streamon()\n`;
         }
     }
 ];
