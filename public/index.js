@@ -651,7 +651,20 @@ function init() {
 }
 
 function sendCode() {
-    fetch('http://raspberrypi.local/sendCode', {
+    let xhr = new XMLHttpRequest();
+    xhr.open("POST", "http://raspberrypi.local/sendCode");
+    xhr.setRequestHeader("Content-Type", "application/json");
+
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+            console.log(xhr.status);
+            console.log(xhr.responseText);
+        }};
+
+    let data = JSON.stringify({ "script": Blockly.Python.workspaceToCode() });
+
+    xhr.send(data);
+    /*fetch('http://raspberrypi.local/sendCode', {
         method: 'POST',
         headers: {
             //'Accept': 'application/json',
@@ -660,7 +673,7 @@ function sendCode() {
         body: JSON.stringify({ "script": Blockly.Python.workspaceToCode() })
     })
         .then(response => response.json())
-        .then(response => console.log(JSON.stringify(response)))
+        .then(response => console.log(JSON.stringify(response)))*/
 }
 
 
