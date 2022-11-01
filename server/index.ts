@@ -19,6 +19,7 @@ app.post("/", jsonParser, (req: Request, res: Response) => {//request handler vo
 
         const date = new Date();//maak een nieuwe Date object
 
+        //todo: pak de opgeslagen video terug met de datestring!
         const datestring = date.getDate()  + "-" + (date.getMonth()+1) + "-" + date.getFullYear() + "_" +
             date.getHours() + "-" + date.getMinutes() + "-" + date.getSeconds() + "-" + date.getMilliseconds();//maak er een mooie datestring van
 

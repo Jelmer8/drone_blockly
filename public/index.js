@@ -534,7 +534,18 @@ const custom_blocks = [
         "nextStatement": null,
         "tooltip": "Start met opnemen.",
         "codeGen": (block) => {
-            return `record = True\ntello.streamon()\n`;
+            return `videoCount += 1\nrecord = True\ntello.streamon()\n`;
+        }
+    },
+    {
+        "type": "drone_stop_record",
+        "message0": "Stop met een filmpje opnemen",
+        "colour": "#000000",
+        "previousStatement": null,
+        "nextStatement": null,
+        "tooltip": "Stop met opnemen.",
+        "codeGen": (block) => {
+            return `record = False\ntello.streamoff()\n`;
         }
     },
     {
@@ -645,36 +656,22 @@ function init() {
                 break;
         }
         if (codeTextArea.innerHTML === "") {
-            codeTextArea.innerHTML = "Hier komt de gegenereerde python code in te staan als je blokjes toevoegt!";
+            codeTextArea.innerHTML = "Hier komt de vertaalde python code in te staan als je blokjes toevoegt!";
         }
     });
 }
 
 function sendCode() {
-    let xhr = new XMLHttpRequest();
-    xhr.open("POST", "http://raspberrypi.local/sendCode");
-    xhr.setRequestHeader("Accept", "application/json");
-    xhr.setRequestHeader("Content-Type", "application/json");
-
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4) {
-            console.log(xhr.status);
-            console.log(xhr.responseText);
-        }};
-
-    let data = JSON.stringify({ "script": Blockly.Python.workspaceToCode() });
-
-    xhr.send(data);
-    /*fetch('http://raspberrypi.local/sendCode', {
-        method: 'POST',
-        headers: {
+    fetch('sendCode', {
+        "method": 'POST',
+        "headers": {
             //'Accept': 'application/json',
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ "script": Blockly.Python.workspaceToCode() })
+        "body": JSON.stringify({ "script": Blockly.Python.workspaceToCode() })
     })
-        .then(response => response.json())
-        .then(response => console.log(JSON.stringify(response)))*/
+        //.then(response => response)
+        .then(response => console.log(response))
 }
 
 
