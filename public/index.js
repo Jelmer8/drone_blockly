@@ -372,8 +372,10 @@ const toolbox = {
                         },
 						{
 							kind: 'BLOCK',
-							type: 'drone_move'
-						},
+							type: 'drone_move',
+                            blockxml:
+                                '<block type="drone_move">\n          <value name="DISTANCE">\n            <shadow type="math_number">\n              <field name="NUM">1</field>\n            </shadow>\n          </value>\n          <value name="B">\n            <shadow type="math_number">\n              <field name="NUM">1</field>\n            </shadow>\n          </value>\n        </block>'
+                        },
                         {
                             kind: 'BLOCK',
                             type: 'drone_get_battery'
@@ -393,6 +395,10 @@ const toolbox = {
                         {
                             kind: 'BLOCK',
                             type: 'drone_flip'
+                        },
+                        {
+                            kind: 'BLOCK',
+                            type: 'drone_move2'
                         }
                     ],
                     name: 'Toggles',
@@ -530,6 +536,43 @@ const custom_blocks = [
         "codeGen": (block) => {
             return `record = True\ntello.streamon()\n`;
         }
+    },
+    {
+        "type": "drone_move2",
+        "message0": "Beweeg met %1 cm op de x-as, %2 cm op de y-as, en %3 cm op de z-as met %4 % snelheid",
+        "colour": "#000000",//todo: dropdown ipv negatieve getallen
+        "previousStatement": null,
+        "nextStatement": null,
+        "tooltip": "",
+        "args0": [
+            {
+                "type": "input_value",
+                "check": "Number",
+                "name": "x",
+            },
+            {
+                "type": "input_value",
+                "check": "Number",
+                "name": "y",
+            },
+            {
+                "type": "input_value",
+                "check": "Number",
+                "name": "z",
+            },
+            {
+                "type": "input_value",
+                "check": "Number",
+                "name": "speed",
+            }
+        ],
+        "codeGen": (block) => {
+            const x = Blockly.Python.valueToCode(block, 'x', Blockly.Python.ORDER_NONE);
+            const y = Blockly.Python.valueToCode(block, 'y', Blockly.Python.ORDER_NONE);
+            const z = Blockly.Python.valueToCode(block, 'z', Blockly.Python.ORDER_NONE);
+            const speed = Blockly.Python.valueToCode(block, 'speed', Blockly.Python.ORDER_NONE);
+            return `tello.go_xyz_speed(${x}, ${y}, ${z}, ${speed})\n`;
+        }
     }
 ];
 
@@ -607,5 +650,17 @@ function init() {
     });
 }
 
+function sendCode() {
+    fetch('http://raspberrypi.local/sendCode', {
+        method: 'POST',
+        headers: {
+            //'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ "script": Blockly.Python.workspaceToCode() })
+    })
+        .then(response => response.json())
+        .then(response => console.log(JSON.stringify(response)))
+}
 
 
