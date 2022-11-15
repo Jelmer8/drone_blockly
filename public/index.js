@@ -662,7 +662,7 @@ function init() {
 }
 
 function sendCode() {
-    fetch('sendCode', {
+    fetch('sendCode/', {
         method: 'POST',
         headers: {
             //'Accept': 'application/json',
