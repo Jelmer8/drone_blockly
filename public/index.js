@@ -663,12 +663,12 @@ function init() {
 
 function sendCode() {
     fetch('sendCode', {
-        "method": 'POST',
-        "headers": {
+        method: 'POST',
+        headers: {
             //'Accept': 'application/json',
             'Content-Type': 'application/json'
         },
-        "body": JSON.stringify({ "script": Blockly.Python.workspaceToCode() })
+        body: JSON.stringify({ "script": Blockly.Python.workspaceToCode() })
     })
         //.then(response => response)
         .then(response => console.log(response))
