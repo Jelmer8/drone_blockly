@@ -43,7 +43,7 @@ app.post("/", jsonParser, (req: Request, res: Response) => {//request handler vo
         let python;
 
         try {
-            python = spawn('L:\\Bureaublad\\WPy64-3902\\python-3.9.0.amd64\\python', [`uploads/${datestring}.py`]);
+            python = spawn('python3', [`uploads/${datestring}.py`]);
         } catch(e) {
             currentlyRunningScript = false;
             console.log(e);
