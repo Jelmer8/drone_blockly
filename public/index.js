@@ -671,7 +671,7 @@ function sendCode() {
         body: JSON.stringify({ "script": Blockly.Python.workspaceToCode() })
     })
         //.then(response => response)
-        .then(response => console.log(response))
+        .then(response => console.log(response.text()))
 		.then(data => console.log(data))
 }
 
