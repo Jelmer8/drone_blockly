@@ -399,7 +399,15 @@ const toolbox = {
                         {
                             kind: 'BLOCK',
                             type: 'drone_move2'
-                        }
+                        },
+						{
+							kind: 'BLOCK',
+							type: 'drone_start_record'
+						},
+						{
+							kind: 'BLOCK',
+							type: 'drone_stop_record'
+						}
                     ],
                     name: 'Toggles',
                     colour: '#091285'
@@ -534,7 +542,7 @@ const custom_blocks = [
         "nextStatement": null,
         "tooltip": "Start met opnemen.",
         "codeGen": (block) => {
-			Blockly.Python.definitions_['drone_start_record'] = 'ìmport recorder';
+			Blockly.Python.definitions_['drone_start_record'] = 'from .. ìmport recorder';
             return `frame_read = tello.get_frame_read()\nvideoCount += 1\nrecord = True\ntello.streamon()\n`;
         }
     },
