@@ -1,4 +1,4 @@
-import time, cv2
+import time, cv2, os
 from threading import Thread
 from djitellopy import Tello
 
@@ -8,7 +8,9 @@ frame_read = None
 
 def video_opnemen():# let op! dit is een functie die nodig is voor het opnemen van video
 	try:
-		os.mkdir(os.path.basename(__file__).replace(".py", ""))#maak een mapje met als naam de datestring
+		if not os.path.exists(os.path.basename(__file__).replace(".py", "")):
+			os.mkdir(os.path.basename(__file__).replace(".py", ""))#maak een mapje met als naam de datestring
+			
 		while True:
 
 			if record is True:
