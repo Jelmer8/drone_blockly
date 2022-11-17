@@ -550,7 +550,7 @@ const custom_blocks = [
     },
     {
         "type": "drone_move2",
-        "message0": "Beweeg met %1 cm op de x-as, %2 cm op de y-as, en %3 cm op de z-as met %4 % snelheid",
+        "message0": "Beweeg met %1 cm links, %2 cm omhoog, en %3 cm vooruit met %4 % snelheid",
         "colour": "#000000",//todo: dropdown ipv negatieve getallen
         "previousStatement": null,
         "nextStatement": null,
@@ -582,7 +582,7 @@ const custom_blocks = [
             const y = Blockly.Python.valueToCode(block, 'y', Blockly.Python.ORDER_NONE);
             const z = Blockly.Python.valueToCode(block, 'z', Blockly.Python.ORDER_NONE);
             const speed = Blockly.Python.valueToCode(block, 'speed', Blockly.Python.ORDER_NONE);
-            return `tello.go_xyz_speed(${x}, ${y}, ${z}, ${speed})\n`;
+            return `tello.go_xyz_speed(${z}, ${x}, ${y}, ${speed})\n`;
         }
     }
 ];
