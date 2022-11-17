@@ -673,7 +673,7 @@ function init() {
 function generateCode() {
 	var code = Blockly.Python.workspaceToCode();
 	
-	if (code.contains("record = True")) {//er wordt een filmpje opgenomen
+	if (code.includes("record = True")) {//er wordt een filmpje opgenomen
 		code += "\n\nrecord = False\ntime.sleep(0.5)\nrecorder.raise_exception()\nrecorder.join()";
 	}
 	
