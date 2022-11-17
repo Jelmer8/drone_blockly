@@ -534,7 +534,8 @@ const custom_blocks = [
         "nextStatement": null,
         "tooltip": "Start met opnemen.",
         "codeGen": (block) => {
-            return `videoCount += 1\nrecord = True\ntello.streamon()\n`;
+			Blockly.Python.definitions_['drone_start_record'] = 'ìmport recorder';
+            return `frame_read = tello.get_frame_read()\nvideoCount += 1\nrecord = True\ntello.streamon()\n`;
         }
     },
     {
@@ -661,6 +662,10 @@ function init() {
     });
 }
 
+function generateCode() {
+	return Blockly.Python.workspaceToCode() + "\n\nrecord = False\ntime.sleep(0.5)recorder.raise_exception()\nrecorder.join()";
+}
+
 function sendCode() {
     fetch('sendCode/', {
         method: 'POST',
@@ -668,7 +673,7 @@ function sendCode() {
             //'Accept': 'application/json',
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ "script": Blockly.Python.workspaceToCode() })
+        body: JSON.stringify({ "script": generateCode() })
     })
         //.then(response => response)
         .then(response => response.text().then(text => console.log(text)))
