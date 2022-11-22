@@ -542,8 +542,8 @@ const custom_blocks = [
         "nextStatement": null,
         "tooltip": "Start met opnemen.",
         "codeGen": (block) => {
-			Blockly.Python.definitions_['drone_start_record'] = 'from .. import recorder';
-            return `tello.streamon()\nframe_read = tello.get_frame_read()\nvideoCount += 1\nrecord = True\n`;
+			Blockly.Python.definitions_['drone_start_record'] = 'import recorder';
+            return `tello.streamon()\nrecorder.frame_read = tello.get_frame_read()\nrecorder.videoCount += 1\nrecorder.record = True\n`;
         }
     },
     {
@@ -554,7 +554,7 @@ const custom_blocks = [
         "nextStatement": null,
         "tooltip": "Stop met opnemen.",
         "codeGen": (block) => {
-            return `record = False\ntello.streamoff()\n`;
+            return `recorder.record = False\ntello.streamoff()\n`;
         }
     },
     {
@@ -674,7 +674,7 @@ function generateCode() {
 	var code = Blockly.Python.workspaceToCode();
 	
 	if (code.includes("record = True")) {//er wordt een filmpje opgenomen
-		code += "\n\nrecord = False\ntime.sleep(0.5)\nrecorder.raise_exception()\nrecorder.join()";
+		code += "\n\nrecorder.record = False\ntime.sleep(0.5)\nrecorder.raise_exception()\nrecorder.join()";
 	}
 	
 	return code;
