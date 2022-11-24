@@ -374,7 +374,7 @@ const toolbox = {
 							kind: 'BLOCK',
 							type: 'drone_move',
                             blockxml:
-                                '<block type="drone_move">\n          <value name="DISTANCE">\n            <shadow type="math_number">\n              <field name="NUM">1</field>\n            </shadow>\n          </value>\n          <value name="B">\n            <shadow type="math_number">\n              <field name="NUM">1</field>\n            </shadow>\n          </value>\n        </block>'
+                                '<block type="drone_move"><value name="DISTANCE"><shadow type="math_number"><field name="NUM">1</field></shadow></value></block>'
                         },
                         {
                             kind: 'BLOCK',
@@ -398,7 +398,8 @@ const toolbox = {
                         },
                         {
                             kind: 'BLOCK',
-                            type: 'drone_move2'
+                            type: 'drone_move2',
+                            blockxml: '<block type="drone_move2"><value name="x"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="y"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="z"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="speed"><shadow type="math_number"><field name="NUM">30</field></shadow></value></block>'
                         },
 						{
 							kind: 'BLOCK',
@@ -407,7 +408,12 @@ const toolbox = {
 						{
 							kind: 'BLOCK',
 							type: 'drone_stop_record'
-						}
+						},
+                        {
+                            kind: 'BLOCK',
+                            type: 'drone_rotate',
+                            blockxml: '<block type="drone_rotate"><value name="rotation"><shadow type="math_number"><field name="NUM">90</field></shadow></value></block>'
+                        }
                     ],
                     name: 'Toggles',
                     colour: '#091285'
@@ -432,7 +438,7 @@ const custom_blocks = [
 		"tooltip": "Wacht tot de drone verbonden is.",
         "codeGen": () => {
             Blockly.Python.definitions_['drone_connect'] = 'from djitellopy import Tello';
-            return 'tello = Tello()\ntello.connect()\n';
+            return 'tello = Tello()\ntello.connect()\n\n';
         }
 	},
 	{
@@ -464,7 +470,7 @@ const custom_blocks = [
         "codeGen": (block) => {
             const direction = block.getFieldValue("DIRECTION");
 
-            return `tello.move_${direction}(${Blockly.Python.valueToCode(block, 'DISTANCE', Blockly.Python.ORDER_NONE)})\n`;
+            return `tello.move_${direction}(${Blockly.Python.valueToCode(block, 'DISTANCE', Blockly.Python.ORDER_NONE)})\n\n`;
         }
 	},
 	{
@@ -479,12 +485,12 @@ const custom_blocks = [
     },
     {
         "type": "drone_is_flying",
-        "message0": "Of de drone nog aan het vliegen is",
+        "message0": "is de drone nog aan het vliegen",
         "colour": "#000000",
         "output": "Boolean",
         "tooltip": "Kijkt of de drone nog vliegt.",
         "codeGen": (block) => {
-            return "tello.is_flying()\n";
+            return "tello.is_flying()\n\n";
         }
     },
     {
@@ -495,7 +501,7 @@ const custom_blocks = [
         "nextStatement": null,
         "tooltip": "Wacht tot de drone opgestegen is.",
         "codeGen": (block) => {
-            return "tello.takeoff()\n";
+            return "tello.takeoff()\n\n";
         }
     },
     {
@@ -506,7 +512,7 @@ const custom_blocks = [
         "nextStatement": null,
         "tooltip": "Wacht tot de drone geland is.",
         "codeGen": (block) => {
-            return "tello.land()\n";
+            return "tello.land()\n\n";
         }
     },
     {
@@ -531,7 +537,7 @@ const custom_blocks = [
         "codeGen": (block) => {
             const direction = block.getFieldValue("DIRECTION");
 
-            return `tello.flip_${direction}()\n`;
+            return `tello.flip_${direction}()\n\n`;
         }
     },
     {
@@ -543,7 +549,7 @@ const custom_blocks = [
         "tooltip": "Start met opnemen.",
         "codeGen": (block) => {
 			Blockly.Python.definitions_['drone_start_record'] = 'import recorder';
-            return `tello.streamon()\nrecorder.frame_read = tello.get_frame_read()\nrecorder.videoCount += 1\nrecorder.record = True\n`;
+            return `tello.streamon()\nrecorder.start(tello.get_frame_read())\n\n`;
         }
     },
     {
@@ -554,13 +560,13 @@ const custom_blocks = [
         "nextStatement": null,
         "tooltip": "Stop met opnemen.",
         "codeGen": (block) => {
-            return `recorder.record = False\ntello.streamoff()\n`;
+            return `recorder.stop()\ntello.streamoff()\n\n`;
         }
     },
     {
         "type": "drone_move2",
-        "message0": "Beweeg met %1 cm links, %2 cm omhoog, en %3 cm vooruit met %4 % snelheid",
-        "colour": "#000000",//todo: dropdown ipv negatieve getallen
+        "message0": "Beweeg met %1 cm %5, %2 cm %6, en %3 cm %7 met %4 % snelheid",
+        "colour": "#000000",
         "previousStatement": null,
         "nextStatement": null,
         "tooltip": "",
@@ -584,32 +590,93 @@ const custom_blocks = [
                 "type": "input_value",
                 "check": "Number",
                 "name": "speed",
+            },
+            {
+                "type": "field_dropdown",
+                "name": "x_dir",
+                "options": [
+                    [ "links", "+" ],
+                    [ "rechts", "-" ]
+                ]
+            },
+            {
+                "type": "field_dropdown",
+                "name": "y_dir",
+                "options": [
+                    [ "omhoog", "+" ],
+                    [ "omlaag", "-" ]
+                ]
+            },
+            {
+                "type": "field_dropdown",
+                "name": "z_dir",
+                "options": [
+                    [ "vooruit", "+" ],
+                    [ "achteruit", "-" ]
+                ]
             }
         ],
         "codeGen": (block) => {
-            const x = Blockly.Python.valueToCode(block, 'x', Blockly.Python.ORDER_NONE);
-            const y = Blockly.Python.valueToCode(block, 'y', Blockly.Python.ORDER_NONE);
-            const z = Blockly.Python.valueToCode(block, 'z', Blockly.Python.ORDER_NONE);
+            var x = Blockly.Python.valueToCode(block, 'x', Blockly.Python.ORDER_NONE);
+            var y = Blockly.Python.valueToCode(block, 'y', Blockly.Python.ORDER_NONE);
+            var z = Blockly.Python.valueToCode(block, 'z', Blockly.Python.ORDER_NONE);
+
+            if (block.getFieldValue("x_dir") === "-") {
+                x = -x;
+            }
+
+            if (block.getFieldValue("y_dir") === "-") {
+                y = -y;
+            }
+
+            if (block.getFieldValue("z_dir") === "-") {
+                z = -z;
+            }
+
             const speed = Blockly.Python.valueToCode(block, 'speed', Blockly.Python.ORDER_NONE);
-            return `tello.go_xyz_speed(${z}, ${x}, ${y}, ${speed})\n`;
+            return `tello.go_xyz_speed(${z}, ${x}, ${y}, ${speed})\n\n`;
+        }
+    },
+    {
+        "type": "drone_rotate",
+        "message0": "Draai %1 graden %2",
+        "colour": "#000000",
+        "previousStatement": null,
+        "nextStatement": null,
+        "tooltip": "",
+        "args0": [
+            {
+                "type": "input_value",
+                "check": "Number",
+                "name": "rotation"
+            },
+            {
+                "type": "field_dropdown",
+                "name": "direction",
+                "options": [
+                    [ "met de klok mee", "clockwise" ],
+                    [ "tegen de klok in", "counter_clockwise" ]
+                ]
+            }
+        ],
+        "codeGen": (block) => {
+
+            const direction = block.getFieldValue("direction");
+            const rotation = Blockly.Python.valueToCode(block, 'rotation', Blockly.Python.ORDER_NONE);
+
+            return `tello.rotate_${direction}(${rotation})\n\n`;
         }
     }
 ];
 
-//todo: camera functies (in thread in python?)
-//todo: filmpjes moeten opgeslagen worden op de server!!
-//https://github.com/damiafuentes/DJITelloPy/blob/master/examples/record-video.py
 
 //https://github.com/damiafuentes/DJITelloPy/blob/master/examples/simple-swarm.py
 
 /*
 blokjes:
-start met filmen
-stop met filmen
-
-meer bewegen
-snelheid?
-draaien
+  - meer bewegen
+  - snelheid?
+  - draaien
  */
 
 //todo: impl error checking, als script error x maakt, geef user duidelijke feedback als mogelijk
@@ -652,9 +719,8 @@ function init() {
 
     workspace.addChangeListener((event) => {//eventlistener is op het moment alleen voor het opnieuw genereren van de python code preview
         switch(event.type) {
-            //todo: case Blockly.Events.BLOCK_CREATE is dit handig??
             case Blockly.Events.BLOCK_CHANGE://als er iets aan een blok verandert, genereer de code opnieuw (het genereren kost maar heel weinig tijd, ~1ms)
-                if (event.element === "field" || event.element === "disabled") {//todo: wat is inline, mutation? https://developers.google.com/blockly/guides/configure/web/events#event_types
+                if (event.element === "field" || event.element === "disabled") {
                     const currTime = performance.now();
                     codeTextArea.innerHTML = Blockly.Python.workspaceToCode(workspace);
                     console.log(performance.now() - currTime);
@@ -672,11 +738,11 @@ function init() {
 
 function generateCode() {
 	var code = Blockly.Python.workspaceToCode();
-	
+
 	if (code.includes("record = True")) {//er wordt een filmpje opgenomen
-		code += "\n\nrecorder.record = False\ntime.sleep(0.5)\nrecorder.raise_exception()\nrecorder.join()";
+		code += "\n\nrecorder.record = False\ntime.sleep(0.5)\nrecorder.recorder.raise_exception()\nrecorder.recorder.join()";//TODO: TESTEN!!!
 	}
-	
+
 	return code;
 }
 
