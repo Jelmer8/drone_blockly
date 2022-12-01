@@ -371,20 +371,6 @@ const toolbox = {
 							type: 'drone_connect'
                         },
 						{
-							kind: 'BLOCK',
-							type: 'drone_move',
-                            blockxml:
-                                '<block type="drone_move"><value name="DISTANCE"><shadow type="math_number"><field name="NUM">1</field></shadow></value></block>'
-                        },
-                        {
-                            kind: 'BLOCK',
-                            type: 'drone_get_battery'
-                        },
-                        {
-                            kind: 'BLOCK',
-                            type: 'drone_is_flying'
-                        },
-                        {
                             kind: 'BLOCK',
                             type: 'drone_takeoff'
                         },
@@ -392,14 +378,25 @@ const toolbox = {
                             kind: 'BLOCK',
                             type: 'drone_land'
                         },
-                        {
-                            kind: 'BLOCK',
-                            type: 'drone_flip'
+						{
+							kind: 'BLOCK',
+							type: 'drone_move',
+                            blockxml:
+                                '<block type="drone_move"><value name="DISTANCE"><shadow type="math_number"><field name="NUM">1</field></shadow></value></block>'
                         },
-                        {
+						{
                             kind: 'BLOCK',
                             type: 'drone_move2',
                             blockxml: '<block type="drone_move2"><value name="x"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="y"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="z"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="speed"><shadow type="math_number"><field name="NUM">30</field></shadow></value></block>'
+                        },
+						{
+                            kind: 'BLOCK',
+                            type: 'drone_rotate',
+                            blockxml: '<block type="drone_rotate"><value name="rotation"><shadow type="math_number"><field name="NUM">90</field></shadow></value></block>'
+                        },
+						{
+                            kind: 'BLOCK',
+                            type: 'drone_flip'
                         },
 						{
 							kind: 'BLOCK',
@@ -411,11 +408,14 @@ const toolbox = {
 						},
                         {
                             kind: 'BLOCK',
-                            type: 'drone_rotate',
-                            blockxml: '<block type="drone_rotate"><value name="rotation"><shadow type="math_number"><field name="NUM">90</field></shadow></value></block>'
-                        }
+                            type: 'drone_get_battery'
+                        },
+                        {
+                            kind: 'BLOCK',
+                            type: 'drone_is_flying'
+                        },
                     ],
-                    name: 'Toggles',
+                    name: 'Functies',
                     colour: '#091285'
                 }
             ],
@@ -444,7 +444,7 @@ const custom_blocks = [
 	{
 		"type": "drone_move",
 		"message0": "Drone %1 centimeter %2 laten vliegen",
-		"colour": "#000000",
+		"colour": "#005500",
 		"previousStatement": null,
 		"nextStatement": null,
 		"args0": [
@@ -466,7 +466,7 @@ const custom_blocks = [
               ]
           }
 		],
-		"tooltip": "Laat de drone x centimeter vooruit vliegen.",
+		"tooltip": "Laat de drone <afstand> centimeter naar <richting> vliegen.",
         "codeGen": (block) => {
             const direction = block.getFieldValue("DIRECTION");
 
@@ -518,7 +518,7 @@ const custom_blocks = [
     {
         "type": "drone_flip",
         "message0": 'Laat de drone een flip naar %1 doen',
-        "colour": "#000000",
+        "colour": "#005500",
         "previousStatement": null,
         "nextStatement": null,
         "tooltip": "Laat de drone een flip doen.",
@@ -543,7 +543,7 @@ const custom_blocks = [
     {
         "type": "drone_start_record",
         "message0": "Start met een filmpje opnemen",
-        "colour": "#000000",
+        "colour": "#660000",
         "previousStatement": null,
         "nextStatement": null,
         "tooltip": "Start met opnemen.",
@@ -555,7 +555,7 @@ const custom_blocks = [
     {
         "type": "drone_stop_record",
         "message0": "Stop met een filmpje opnemen",
-        "colour": "#000000",
+        "colour": "#660000",
         "previousStatement": null,
         "nextStatement": null,
         "tooltip": "Stop met opnemen.",
@@ -566,7 +566,7 @@ const custom_blocks = [
     {
         "type": "drone_move2",
         "message0": "Beweeg met %1 cm %5, %2 cm %6, en %3 cm %7 met %4 % snelheid",
-        "colour": "#000000",
+        "colour": "#005500",
         "previousStatement": null,
         "nextStatement": null,
         "tooltip": "",
@@ -640,7 +640,7 @@ const custom_blocks = [
     {
         "type": "drone_rotate",
         "message0": "Draai %1 graden %2",
-        "colour": "#000000",
+        "colour": "#005500",
         "previousStatement": null,
         "nextStatement": null,
         "tooltip": "",

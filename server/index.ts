@@ -35,7 +35,7 @@ app.post("/", jsonParser, (req: Request, res: Response) => {//request handler vo
 
         //todo: errors simpeler maken?
 
-        var dataToSend: String;
+        var dataToSend: String = "";
         // spawn new child process to call the python script
 
         currentlyRunningScript = true;
@@ -51,9 +51,13 @@ app.post("/", jsonParser, (req: Request, res: Response) => {//request handler vo
 
         // collect data from script
         python.stdout.on('data', function (data) {
-            console.log('Pipe data from python script ...');
-            dataToSend = data.toString();
+            dataToSend += data.toString();
         });
+		
+		python.stderr.on('data', function(data) {
+			dataToSend += data.toString();
+		})
+		
         // in close event we are sure that stream from child process is closed
         python.on('close', (code) => {
             currentlyRunningScript = false;
