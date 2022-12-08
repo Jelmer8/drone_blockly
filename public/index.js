@@ -670,19 +670,6 @@ const custom_blocks = [
 ];
 
 
-//https://github.com/damiafuentes/DJITelloPy/blob/master/examples/simple-swarm.py
-
-/*
-blokjes:
-  - meer bewegen
-  - snelheid?
-  - draaien
- */
-
-//todo: impl error checking, als script error x maakt, geef user duidelijke feedback als mogelijk
-//todo: ook log maken waarin user exact de output kan zien.
-
-
 function init() {
     //register de codeGen functies bij blockly
     custom_blocks.forEach((block, index) => {
@@ -710,9 +697,9 @@ function init() {
         if (textWorkspace !== '<xml xmlns="https://developers.google.com/blockly/xml"></xml>') {//checken of er wel objecten in de workspace staan
             localStorage.setItem('workspace', textWorkspace);
         }
-        //TODO: deze weer uncommenten (reloaden is zo sneller)
-        //event.preventDefault();
-        //return event.returnValue = "Weet je zeker dat je de pagina wilt afsluiten?";
+		
+        event.preventDefault();
+        return event.returnValue = "Weet je zeker dat je de pagina wilt afsluiten?";
     };
 
     const codeTextArea = document.getElementById("codeTextArea");
@@ -740,7 +727,7 @@ function generateCode() {
 	var code = Blockly.Python.workspaceToCode();
 
 	if (code.includes("record = True")) {//er wordt een filmpje opgenomen
-		code += "\n\nrecorder.record = False\ntime.sleep(0.5)\nrecorder.recorder.raise_exception()\nrecorder.recorder.join()";//TODO: TESTEN!!!
+		code += "\n\nrecorder.record = False\ntime.sleep(0.5)\nrecorder.recorder.raise_exception()\nrecorder.recorder.join()";
 	}
 
 	return code;
@@ -750,12 +737,10 @@ function sendCode() {
     fetch('sendCode/', {
         method: 'POST',
         headers: {
-            //'Accept': 'application/json',
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({ "script": generateCode() })
     })
-        //.then(response => response)
         .then(response => response.text().then(text => console.log(text)))
 		.then(data => console.log(data))
 }

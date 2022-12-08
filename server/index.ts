@@ -19,7 +19,6 @@ app.post("/", jsonParser, (req: Request, res: Response) => {//request handler vo
 
         const date = new Date();//maak een nieuwe Date object
 
-        //todo: pak de opgeslagen video terug met de datestring!
         const datestring = date.getDate()  + "-" + (date.getMonth()+1) + "-" + date.getFullYear() + "_" +
             date.getHours() + "-" + date.getMinutes() + "-" + date.getSeconds() + "-" + date.getMilliseconds();//maak er een mooie datestring van
 
@@ -32,8 +31,6 @@ app.post("/", jsonParser, (req: Request, res: Response) => {//request handler vo
 
             return;
         }
-
-        //todo: errors simpeler maken?
 
         var dataToSend: String = "";
         // spawn new child process to call the python script
@@ -74,10 +71,5 @@ app.post("/", jsonParser, (req: Request, res: Response) => {//request handler vo
 });
 
 app.listen(port, () => {
-    console.log(`Example app listening at http://localhost:${port}`)
+    console.log(`Server is gereed`)
 });
-
-/*
-todo: handige config file maken voor instellen python path etc etc voor handig op school instellen na thuis maken
-todo: veilig maken, function whitelist?
-*/
