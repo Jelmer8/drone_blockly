@@ -40,7 +40,7 @@ app.post("/", jsonParser, (req: Request, res: Response) => {//request handler vo
         let python;
 
         try {
-            python = spawn('python3', [`uploads/${datestring}.py`]);
+            python = spawn('python3', [`uploads/${datestring}.py`, `${datestring}`]);
         } catch(e) {
             currentlyRunningScript = false;
             console.log(e);
@@ -60,7 +60,9 @@ app.post("/", jsonParser, (req: Request, res: Response) => {//request handler vo
             currentlyRunningScript = false;
             console.log(`child process close all stdio with code ${code}`);
             // send data to browser
-            res.send(dataToSend);
+            
+			//res.send(dataToSend);
+			res.send(datestring);
         });
 
     } else {

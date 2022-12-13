@@ -1,4 +1,4 @@
-import time, cv2, os, ctypes, threading
+import time, cv2, os, ctypes, threading, sys
 from threading import Thread
 from djitellopy import Tello
 
@@ -28,8 +28,8 @@ class record(threading.Thread):
 
     def run(self):
         try:
-            if not os.path.exists(os.path.basename(__file__).replace(".py", "")):
-                os.mkdir(os.path.basename(__file__).replace(".py", ""))  # maak een mapje met als naam de datestring
+            if not os.path.exists("/home/pi/Desktop/drone_blockly/server/uploads/" + sys.argv[1]):
+                os.mkdir("/home/pi/Desktop/drone_blockly/server/uploads/" + sys.argv[1])  # maak een mapje met als naam de datestring
 
             while True:
 
@@ -37,7 +37,7 @@ class record(threading.Thread):
 
                     height, width, _ = frame_read.frame.shape
                     video = cv2.VideoWriter(
-                        os.path.basename(__file__).replace(".py", "") + "/" + str(videoCount) + ".avi",
+                        "/home/pi/Desktop/drone_blockly/server/uploads/" + sys.argv[1] + ".avi",
                         cv2.VideoWriter_fourcc(*'XVID'), 30, (width, height))
 
                     while record:
